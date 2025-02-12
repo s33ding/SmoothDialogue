@@ -1,2 +1,2 @@
-docker exec -it flask_web_1 /bin/sh
+docker exec -it smoothdialogue-web-1 bash
 
