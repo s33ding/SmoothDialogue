@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmoothDialogue</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: none;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        #loading {
+            display: none;
+            color: #007bff;
+            margin-top: 10px;
+        }
+        .copy-btn {
+            display: none;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>SmoothDialogue</h1>
+    <div class="container">
+        <h2>Texto Original</h2>
+        <textarea id="userInput" placeholder="Digite sua mensagem para melhorar a comunicação..."></textarea>
+        
+        <h2>Texto Melhorado</h2>
+        <p id="response"></p>
+        <button onclick="improveCommunication()" id="submitButton">Melhorar Comunicação</button>
+        <p id="loading">Processando...</p>
+        <button class="copy-btn" id="copyButton" onclick="copyToClipboard()">Copiar</button>
+    </div>
+
+    <script>
+        function improveCommunication() {
+            let inputText = document.getElementById("userInput").value;
+            let responseBox = document.getElementById("response");
+            let loadingBox = document.getElementById("loading");
+            let copyButton = document.getElementById("copyButton");
+            let submitButton = document.getElementById("submitButton");
+
+            if (inputText.trim() === "") {
+                responseBox.innerHTML = "Por favor, insira uma mensagem!";
+                responseBox.style.color = "red";
+                return;
+            }
+
+            responseBox.innerHTML = "";
+            loadingBox.style.display = "block";
+            submitButton.disabled = true;
+            copyButton.style.display = "none";
+
+            fetch("/", {
+                method: "POST",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                body: `text=${encodeURIComponent(inputText)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingBox.style.display = "none";
+                submitButton.disabled = false;
+                responseBox.innerHTML = data.corrected_text;
+                responseBox.style.color = "#28a745";
+                copyButton.style.display = "inline-block";
+            })
+            .catch(() => {
+                loadingBox.style.display = "none";
+                submitButton.disabled = false;
+                responseBox.innerHTML = "Ocorreu um erro! Tente novamente.";
+                responseBox.style.color = "red";
+            });
+        }
+
+        function copyToClipboard() {
+            let responseBox = document.getElementById("response");
+            navigator.clipboard.writeText(responseBox.innerText).then(() => {
+                alert("Texto copiado!");
+            });
+        }
+    </script>
+</body>
+</html>
