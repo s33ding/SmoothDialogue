@@ -44,19 +44,10 @@ docker-compose down
 
 ## 🔧 How to Use
 1. Enter your message in **Portuguese**.
-2. (Optional) Add context for better refinement.
-3. Click **Improve Communication**.
-4. Review the enhanced version of your message.
-5. Copy and use it in your work interactions.
-
-## 📌 Contributing
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-new-change`).
-3. Commit your changes (`git commit -m 'Improvement'`).
-4. Push the branch (`git push origin feature-new-change`).
-5. Open a Pull Request for review.
+2. Click **Improve Communication**.
+3. Review the enhanced version of your message.
+4. Copy and use it in your work interactions.
 
 ## 🤝 Acknowledgments
 Thanks to everyone contributing to making communication clearer and more effective! 😊
-
 
