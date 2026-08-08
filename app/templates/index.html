@@ -4,91 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmoothDialogue</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            resize: none;
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:disabled {
-            background-color: #aaa;
-            cursor: not-allowed;
-        }
-        #loading {
-            display: none;
-            color: #007bff;
-            margin-top: 10px;
-        }
-        .copy-btn {
-            display: none;
-            margin-top: 10px;
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>SmoothDialogue</h1>
-    <div class="container">
-        <h2>Texto Original</h2>
-        <textarea id="userInput" placeholder="Digite sua mensagem para melhorar a comunicação..."></textarea>
-        
-        <h2>Texto Melhorado</h2>
-        <p id="response"></p>
-        <button onclick="improveCommunication()" id="submitButton">Melhorar Comunicação</button>
-        <p id="loading">Processando...</p>
-        <button class="copy-btn" id="copyButton" onclick="copyToClipboard()">Copiar</button>
+    <div class="app">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">💬</span>
+                <h1>Smooth<span class="highlight">Dialogue</span></h1>
+            </div>
+            <p class="tagline">Comunique-se com clareza, profissionalismo e empatia</p>
+        </header>
+
+        <main class="container">
+            <div class="panels">
+                <div class="panel panel-input">
+                    <div class="panel-header">
+                        <span class="panel-icon">✏️</span>
+                        <h2>Texto Original</h2>
+                    </div>
+                    <textarea id="userInput" placeholder="Digite sua mensagem aqui...&#10;&#10;Ex: oi pessoal preciso do relatorio ate amanha"></textarea>
+                </div>
+
+                <div class="panel panel-output">
+                    <div class="panel-header">
+                        <span class="panel-icon">✨</span>
+                        <h2>Texto Melhorado</h2>
+                    </div>
+                    <div id="response" class="output-box">
+                        <span class="placeholder-text">O texto aprimorado aparecerá aqui...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button onclick="improveCommunication()" id="submitButton">
+                    <span class="btn-icon">🚀</span>
+                    <span class="btn-text">Melhorar Comunicação</span>
+                </button>
+                <button class="btn-copy" id="copyButton" onclick="copyToClipboard()">
+                    <span class="btn-icon">📋</span>
+                    <span class="btn-text">Copiar</span>
+                </button>
+            </div>
+
+            <div id="loading">
+                <div class="spinner"></div>
+                <span>Aprimorando sua mensagem...</span>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by <strong>AWS Bedrock</strong> · Claude AI</p>
+        </footer>
     </div>
 
     <script>
         function improveCommunication() {
-            let inputText = document.getElementById("userInput").value;
-            let responseBox = document.getElementById("response");
-            let loadingBox = document.getElementById("loading");
-            let copyButton = document.getElementById("copyButton");
-            let submitButton = document.getElementById("submitButton");
+            const inputText = document.getElementById("userInput").value;
+            const responseBox = document.getElementById("response");
+            const loadingBox = document.getElementById("loading");
+            const copyButton = document.getElementById("copyButton");
+            const submitButton = document.getElementById("submitButton");
 
             if (inputText.trim() === "") {
-                responseBox.innerHTML = "Por favor, insira uma mensagem!";
-                responseBox.style.color = "red";
+                responseBox.innerHTML = '<span class="error">Por favor, insira uma mensagem!</span>';
                 return;
             }
 
             responseBox.innerHTML = "";
-            loadingBox.style.display = "block";
+            loadingBox.classList.add("visible");
             submitButton.disabled = true;
-            copyButton.style.display = "none";
+            copyButton.classList.remove("visible");
 
             fetch("/", {
                 method: "POST",
@@ -97,26 +87,43 @@
             })
             .then(response => response.json())
             .then(data => {
-                loadingBox.style.display = "none";
+                loadingBox.classList.remove("visible");
                 submitButton.disabled = false;
-                responseBox.innerHTML = data.corrected_text;
-                responseBox.style.color = "#28a745";
-                copyButton.style.display = "inline-block";
+                responseBox.innerHTML = formatText(data.corrected_text);
+                copyButton.classList.add("visible");
             })
             .catch(() => {
-                loadingBox.style.display = "none";
+                loadingBox.classList.remove("visible");
                 submitButton.disabled = false;
-                responseBox.innerHTML = "Ocorreu um erro! Tente novamente.";
-                responseBox.style.color = "red";
+                responseBox.innerHTML = '<span class="error">Ocorreu um erro! Tente novamente.</span>';
             });
         }
 
+        function formatText(text) {
+            // Basic markdown-like formatting
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\"(.*?)\"/g, '<q>$1</q>');
+        }
+
         function copyToClipboard() {
-            let responseBox = document.getElementById("response");
+            const responseBox = document.getElementById("response");
             navigator.clipboard.writeText(responseBox.innerText).then(() => {
-                alert("Texto copiado!");
+                const copyBtn = document.getElementById("copyButton");
+                copyBtn.querySelector('.btn-text').textContent = "Copiado! ✓";
+                setTimeout(() => {
+                    copyBtn.querySelector('.btn-text').textContent = "Copiar";
+                }, 2000);
             });
         }
+
+        // Allow Ctrl+Enter to submit
+        document.getElementById("userInput").addEventListener("keydown", function(e) {
+            if (e.ctrlKey && e.key === "Enter") {
+                improveCommunication();
+            }
+        });
     </script>
 </body>
 </html>

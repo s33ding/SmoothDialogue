@@ -4,7 +4,10 @@ services:
       context: app
       target: builder
     ports:
-      - '5555:5000'
+      - '80:5000'
     env_file:
       - .env
-
+    volumes:
+      - ~/.aws:/root/.aws:ro
+    environment:
+      - AWS_PROFILE=iesb

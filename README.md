@@ -1,53 +1,52 @@
 # SmoothDialogue
 
-SmoothDialogue is a web app built with Flask to improve written communication in **Portuguese**. It helps refine messages to be clearer, more professional, and friendly. This is designed to help me communicate better with my work team in **Brazil**.
+SmoothDialogue is a web app built with Flask to improve written communication in **Portuguese**. It helps refine messages to be clearer, more professional, and friendly — designed to help communicate better with work teams in **Brazil**.
 
 ## 🚀 Features
-- Enhances text clarity, professionalism, and tone.
-- Maintains technical terms in **English**.
-- Allows optional context for better adjustments.
-- Utilizes the **OpenAI API** for text refinement.
+- Enhances text clarity, professionalism, and tone
+- Maintains technical terms in **English**
+- Uses emojis to reinforce the message
+- Powered by **AWS Bedrock** (Claude Haiku 4.5)
+- Modern dark-mode UI with glassmorphism
+- Keyboard shortcut: `Ctrl+Enter` to submit
 
 ## 🛠️ Tech Stack
-- **Python 3**
-- **Flask**
-- **OpenAI API**
+- **Python 3** + **Flask**
+- **AWS Bedrock** (Anthropic Claude)
 - **HTML, CSS, JavaScript**
 - **Docker**
 
-## 📦 Installation & Setup
+## 📦 Setup
 
-### 1️⃣ Clone the Repository
+### 1. Clone
 ```bash
-git clone https://github.com/yourusername/smoothdialogue.git
-cd smoothdialogue
+git clone https://github.com/s33ding/SmoothDialogue.git
+cd SmoothDialogue
 ```
 
-### 2️⃣ Set Up Environment Variables
-Create a `.env` file in the root directory and add:
+### 2. Environment
+Create a `.env` file:
 ```bash
-OPENAI_API_KEY=your_openai_api_key
 FLASK_SECRET_KEY=your_secret_key
 ```
 
-### 3️⃣ Running with Docker
-#### Build and Start the Container
-```bash
-docker-compose up --build
-```
-The app will be running in a containerized environment at `http://127.0.0.1:5000/`.
+AWS credentials are mounted from `~/.aws` using the `iesb` profile.
 
-#### Stopping the Container
+### 3. Run
 ```bash
-docker-compose down
+docker compose up --build -d
+```
+
+Access at **http://smooth.com.br** (requires `/etc/hosts` entry).
+
+### 4. Local DNS (optional)
+```bash
+echo "127.0.0.1   smooth.com.br" | sudo tee -a /etc/hosts
+echo "127.0.0.1   smooth.com" | sudo tee -a /etc/hosts
 ```
 
 ## 🔧 How to Use
-1. Enter your message in **Portuguese**.
-2. Click **Improve Communication**.
-3. Review the enhanced version of your message.
-4. Copy and use it in your work interactions.
-
-## 🤝 Acknowledgments
-Thanks to everyone contributing to making communication clearer and more effective! 😊
-
+1. Enter your message in **Portuguese**
+2. Click **Melhorar Comunicação** (or `Ctrl+Enter`)
+3. Review the enhanced version
+4. Copy and use it in your work interactions
