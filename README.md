@@ -1,52 +1,90 @@
-# SmoothDialogue
+# 💬 SmoothDialogue
 
-SmoothDialogue is a web app built with Flask to improve written communication in **Portuguese**. It helps refine messages to be clearer, more professional, and friendly — designed to help communicate better with work teams in **Brazil**.
+A web app that rewrites informal Portuguese messages into clear, professional, and empathetic communication — powered by **AWS Bedrock** (Claude Haiku 4.5).
 
-## 🚀 Features
-- Enhances text clarity, professionalism, and tone
-- Maintains technical terms in **English**
-- Uses emojis to reinforce the message
-- Powered by **AWS Bedrock** (Claude Haiku 4.5)
-- Modern dark-mode UI with glassmorphism
-- Keyboard shortcut: `Ctrl+Enter` to submit
+Built to help communicate better with work teams in Brazil.
 
-## 🛠️ Tech Stack
-- **Python 3** + **Flask**
-- **AWS Bedrock** (Anthropic Claude)
-- **HTML, CSS, JavaScript**
-- **Docker**
+## Features
 
-## 📦 Setup
+- Rewrites text to be clear, professional, and friendly
+- Adds appropriate emojis for tone
+- Preserves technical terms in English
+- HTTPS with locally-trusted certificates
+- Dark-mode glassmorphism UI
+- Keyboard-first: `Ctrl+Enter` to submit
+- Desktop shortcut: `Ctrl+Shift+Alt+S`
 
-### 1. Clone
+## Tech Stack
+
+| Layer       | Technology              |
+|-------------|------------------------|
+| Backend     | Python 3, Flask        |
+| AI          | AWS Bedrock (Claude)   |
+| Frontend    | HTML, CSS, JavaScript  |
+| Proxy       | Nginx (SSL termination)|
+| Runtime     | Docker Compose         |
+
+## Quick Start
+
 ```bash
 git clone https://github.com/s33ding/SmoothDialogue.git
 cd SmoothDialogue
 ```
 
-### 2. Environment
-Create a `.env` file:
+### 1. Generate local SSL certs
+
 ```bash
-FLASK_SECRET_KEY=your_secret_key
+mkcert -install
+mkdir -p certs
+mkcert -cert-file certs/cert.pem -key-file certs/key.pem smooth.com.br smooth.com localhost 127.0.0.1
 ```
 
-AWS credentials are mounted from `~/.aws` using the `iesb` profile.
+### 2. Create `.env`
 
-### 3. Run
 ```bash
-docker compose up --build -d
+echo "FLASK_SECRET_KEY=$(openssl rand -hex 16)" > .env
 ```
 
-Access at **http://smooth.com.br** (requires `/etc/hosts` entry).
+### 3. Add local DNS
 
-### 4. Local DNS (optional)
 ```bash
 echo "127.0.0.1   smooth.com.br" | sudo tee -a /etc/hosts
 echo "127.0.0.1   smooth.com" | sudo tee -a /etc/hosts
 ```
 
-## 🔧 How to Use
-1. Enter your message in **Portuguese**
-2. Click **Melhorar Comunicação** (or `Ctrl+Enter`)
-3. Review the enhanced version
-4. Copy and use it in your work interactions
+### 4. Run
+
+```bash
+docker compose up --build -d
+```
+
+### 5. Access
+
+Open **https://smooth.com.br**
+
+## Architecture
+
+```
+Browser ──https──▶ Nginx:443 ──proxy──▶ Flask:5000 ──▶ AWS Bedrock (Claude)
+                      │
+                  certs/cert.pem
+                  certs/key.pem
+```
+
+AWS credentials are mounted read-only from `~/.aws` using the `iesb` profile.
+
+## Keyboard Shortcuts
+
+| Shortcut              | Action                        |
+|-----------------------|-------------------------------|
+| `Ctrl+Enter`          | Submit text for improvement   |
+| `Ctrl+Shift+Alt+S`   | Open app (KDE global shortcut)|
+
+## Environment Variables
+
+| Variable          | Default                                        | Description          |
+|-------------------|------------------------------------------------|----------------------|
+| `FLASK_SECRET_KEY`| `supersecretkey`                               | Flask session signing|
+| `AWS_PROFILE`     | `iesb`                                         | AWS credentials      |
+| `AWS_REGION`      | `us-east-1`                                    | Bedrock region       |
+| `BEDROCK_MODEL_ID`| `us.anthropic.claude-haiku-4-5-20251001-v1:0`  | Model to use         |

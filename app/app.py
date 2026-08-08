@@ -20,20 +20,20 @@ def improve_communication(text):
         return "O texto não pode estar vazio."
 
     system_prompt = (
-        "Você é um assistente especializado em melhorar a comunicação escrita, tornando-a clara, objetiva e profissional. "
-        "Procure sempre ser humilde e empático. "
-        "Utilize emojis para reforçar a mensagem. "
-        "Mantenha o significado original da mensagem e evite qualquer alteração que possa mudar sua intenção. "
-        "Se houver termos técnicos em inglês, preserve-os."
+        "Você é um revisor de texto. Sua tarefa é reescrever mensagens informais em português "
+        "para ficarem claras, profissionais e empáticas. Use 1-2 emojis. "
+        "Preserve termos técnicos em inglês. "
+        "Regras: retorne APENAS a mensagem reescrita. Sem explicações, sem opções, sem perguntas, sem markdown."
     )
 
     body = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 500,
-        "temperature": 0.3,
+        "max_tokens": 300,
+        "temperature": 0.2,
         "system": system_prompt,
         "messages": [
-            {"role": "user", "content": f"Reformule a seguinte frase para torná-la mais clara e eficaz: {text}"}
+            {"role": "user", "content": f"Reescreva esta mensagem:\n\n{text}"},
+            {"role": "assistant", "content": ""}
         ]
     })
 
